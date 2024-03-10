@@ -138,6 +138,9 @@ division:
 	jmp conversion_inversa 
 	
 conversion_inversa:	;convierte el valor de hex a ascii
+	cmp eax, 2560 
+	jae mayor
+
 	mov ecx, 10
 	div cl 
 	movzx edx, ah	;se obtiene el primer digito de la conversion
@@ -151,7 +154,18 @@ conversion_inversa:	;convierte el valor de hex a ascii
 	je term
 	
 	jmp conversion_inversa
+mayor: 
+	mov edx, 0
+	mov ecx, 10
+	div ecx
 	
+	add edx, 30h 
+	push edx
+
+	cmp eax, 0
+	je term
+	jmp mayor
+		
 term:
 	pop edx		;se obtiene digito de stack
 	
