@@ -109,17 +109,18 @@ indicacion2:
 
 operacion:
 	mov eax, [opp]	
+	movzx ebx, al
 
-	cmp eax, 1
+	cmp ebx, 31h
 	je suma
 	
-	cmp eax, 2
+	cmp ebx, 32h
 	je resta
 
-	cmp eax, 3
+	cmp ebx, 33h
 	je multiplicacion
 	
-	cmp eax, 4
+	cmp ebx, 34h
 	je division
 suma:
 	pop eax		;hace la suma 
@@ -129,6 +130,9 @@ suma:
 	jmp conversion_inversa
 
 resta:
+	pop ebx 
+	pop eax
+	sub eax, ebx 
 	jmp conversion_inversa
 
 multiplicacion:
