@@ -110,17 +110,18 @@ indicacion2:
 operacion:
 	mov eax, [opp]	
 	movzx ebx, al
+	sub ebx, 30h	;convierte de ascii a hex
 
-	cmp ebx, 31h
+	cmp ebx, 1
 	je suma
 	
-	cmp ebx, 32h
+	cmp ebx, 2
 	je resta
 
-	cmp ebx, 33h
+	cmp ebx, 3
 	je multiplicacion
 	
-	cmp ebx, 34h
+	cmp ebx, 4
 	je division
 suma:
 	pop eax		;hace la suma 
