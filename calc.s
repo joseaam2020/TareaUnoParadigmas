@@ -137,9 +137,17 @@ resta:
 	jmp conversion_inversa
 
 multiplicacion:
+	pop ebx 
+	pop eax
+	imul ebx
 	jmp conversion_inversa
 
 division:
+	mov dx, 0
+	pop ebx 
+	pop eax 
+	
+	idiv bx
 	jmp conversion_inversa 
 	
 conversion_inversa:	;convierte el valor de hex a ascii
