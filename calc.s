@@ -12,6 +12,7 @@ section .data
 	restar db "2. Restar",0xa
 	multiplicar db "3. Multiplicar",0xa
 	dividir db "4. Dividir",0xa
+	resultado db "El resultado de su opreacion es: $"
 section .text
 	global _start
 
@@ -164,7 +165,7 @@ conversion_inversa:	;convierte el valor de hex a ascii
 	
 	mov eax, ebx	;compara para ver si se obtuvieron todos los digitos
 	cmp eax, 0
-	je term
+	je term1
 	
 	jmp conversion_inversa
 mayor: 
@@ -176,10 +177,16 @@ mayor:
 	push edx
 
 	cmp eax, 0
-	je term
+	je term1
 	jmp mayor
 		
-term:
+term1:
+	mov eax, 4	;syscall para imprimir las indicaciones
+	mov ebx, 1
+	mov ecx, resultado
+	mov edx, 32
+	int 0x80
+term2:
 	pop edx		;se obtiene digito de stack
 	
 	mov [res], edx	;se pone digito en resultado para imprimirlo
@@ -192,7 +199,7 @@ term:
  	cmp esp, ebp	 ;se compara para saber si stack esta vacia
 	je exit
 
-	jmp term
+	jmp term2
 exit:
  
 	mov eax, 1 	;exit del programa
