@@ -13,6 +13,7 @@ section .data
 	multiplicar db "3. Multiplicar",0xa
 	dividir db "4. Dividir",0xa
 	resultado db "El resultado de su opreacion es: $"
+	err db "Por favor ingrese valores aceptados$"
 section .text
 	global _start
 
@@ -40,6 +41,13 @@ conversion:
 	je imprime_menu		;inputs incorrectos)
 	
 	sub eax, 48		;convierte de ascii a entero
+	
+	cmp eax, 0		;compara para saber si no es valido
+	jb error
+
+	cmp eax, 9 
+	ja error	
+	
 	imul ebx, 10		; multiplica por 10 el acumulado (en ebx)
 	add ebx, eax 		;agrega el nuevo digito
 
@@ -48,8 +56,8 @@ conversion:
 	
 
 imprime_menu:
-
-	push ebx
+	
+	push ebx	;guarda numero convertido en stack
 	
 	cmp edi, op2	;compara para saber si ya se obtuvo segundo numero
 	je operacion
@@ -112,6 +120,12 @@ operacion:
 	mov eax, [opp]	
 	movzx ebx, al
 	sub ebx, 30h	;convierte de ascii a hex
+
+	cmp ebx, 0
+	jb error
+
+	cmp ebx, 4
+	ja error
 
 	cmp ebx, 1
 	je suma
@@ -200,9 +214,16 @@ term2:
 	je exit
 
 	jmp term2
-exit:
- 
+exit: 
 	mov eax, 1 	;exit del programa
 	mov ebx, 0 
 	int 0x80
+error:
+	
+	mov eax, 4	;syscall para imprimir las indicaciones
+	mov ebx, 1
+	mov ecx, err
+	mov edx, 35
+	int 0x80
 
+	jmp exit
