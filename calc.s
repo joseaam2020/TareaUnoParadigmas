@@ -3,6 +3,7 @@ section .bss
 	op2 resb 32	;guarda el segundo operando
 	opp resb 32	;guarda la seleccion de operacion
 	res resb 32	;guarda el resultado			
+	repetir resb 32	;guarda valor de repetir al final de aplicacion
 
 section .data
 	ind db "Ingrese su primer operando...",0xa
@@ -13,7 +14,11 @@ section .data
 	multiplicar db "3. Multiplicar",0xa
 	dividir db "4. Dividir",0xa
 	resultado db "El resultado de su opreacion es: $"
-	err db "Por favor ingrese valores aceptados$"
+	err db "Por favor ingrese valores aceptados"
+	fin db 0xa,"Quiere realizar otra operacion?",0xa
+	lsi db "1.Si",0xa
+	lno db "2.No",0xa
+	despedida db "Gracias por utilizaz CalcuTec",0xa
 section .text
 	global _start
 
@@ -37,8 +42,8 @@ _start:
 
 conversion:	
 	movzx eax, byte[esi]	;mueve el nuevo  byte a eax
-	cmp eax, 0x0a		;verifica que termino el string (falta validar
-	je imprime_menu		;inputs incorrectos)
+	cmp eax, 0x0a		;verifica que termino el string 
+	je imprime_menu		 
 	
 	sub eax, 48		;convierte de ascii a entero
 	
@@ -215,6 +220,50 @@ term2:
 
 	jmp term2
 exit: 
+	mov eax, 4	;syscall para imprimir las indicaciones
+	mov ebx, 1
+	mov ecx, fin
+	mov edx, 33
+	int 0x80
+
+	mov eax, 4	;syscall para imprimir las indicaciones
+	mov ebx, 1
+	mov ecx, lsi
+	mov edx, 5 
+	int 0x80
+
+	mov eax, 4	;syscall para imprimir las indicaciones
+	mov ebx, 1
+	mov ecx, lno
+	mov edx, 5 
+	int 0x80
+
+	mov eax, 3	
+	mov ebx, 0
+	mov ecx, repetir
+	mov edx, 32	
+	int 0x80	;lee el input y lo guarda en op1
+
+	mov esi, repetir	;mueve la direccion de repetir a esi
+	xor eax, eax	;limpia el registro
+	movzx eax, byte[esi]	;mueve el nuevo  byte a eax
+	sub eax, 48		;convierte de ascii a entero
+
+	cmp eax, 1	;validacion
+	jb error
+	cmp eax, 2
+	ja error
+	
+	cmp eax, 1
+	je reiniciar
+final:
+	
+	mov eax, 4	;syscall para imprimir las indicaciones
+	mov ebx, 1
+	mov ecx, despedida
+	mov edx, 31
+	int 0x80
+
 	mov eax, 1 	;exit del programa
 	mov ebx, 0 
 	int 0x80
@@ -226,4 +275,62 @@ error:
 	mov edx, 35
 	int 0x80
 
-	jmp exit
+	jmp final
+
+reiniciar:
+	mov ecx, 0
+	mov ebx, 0
+	mov esi, op1		;mueve la direccion de op1 a esi
+	mov edx, esi
+	add edx, 32
+	jmp reiniciar_ciclo
+reiniciar_op2:
+	inc ecx
+	mov esi, op2		;mueve la direccion de op1 a esi
+	mov edx, esi
+	add edx, 32
+	jmp reiniciar_ciclo
+reiniciar_opp:
+	inc ecx
+	mov esi, opp		;mueve la direccion de op1 a esi
+	mov edx, esi
+	add edx, 32
+	jmp reiniciar_ciclo
+reiniciar_res:
+	inc ecx
+	mov esi, res		;mueve la direccion de op1 a esi
+	mov edx, esi
+	add edx, 32
+	jmp reiniciar_ciclo
+reiniciar_repetir:
+	inc ecx
+	mov esi, repetir	;mueve la direccion de op1 a esi
+	mov edx, esi
+	add edx, 32
+	jmp reiniciar_ciclo
+reiniciar_ciclo:
+	mov [esi], bl	
+	inc esi	
+	cmp esi , edx
+	jne reiniciar_ciclo 		 
+	
+	cmp ecx, 0
+	je reiniciar_op2
+	
+	cmp ecx, 1
+	je reiniciar_opp
+
+	cmp ecx, 2
+	je reiniciar_res
+
+	cmp ecx, 3
+	je reiniciar_repetir
+
+	mov eax, 0	;limpiar registros
+	mov ebx, 0
+	mov ecx, 0
+	mov edx, 0
+	mov esi, 0
+	mov edi, 0
+
+	jmp _start
