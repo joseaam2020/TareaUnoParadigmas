@@ -14,11 +14,11 @@ section .data
 	multiplicar db "3. Multiplicar",0xa
 	dividir db "4. Dividir",0xa
 	resultado db "El resultado de su opreacion es: $"
-	err db "Por favor ingrese valores aceptados"
+	err db "Por favor ingrese valores aceptados",0xa
 	fin db 0xa,"Quiere realizar otra operacion?",0xa
 	lsi db "1.Si",0xa
 	lno db "2.No",0xa
-	despedida db "Gracias por utilizaz CalcuTec",0xa
+	despedida db "Gracias por utilizar CalcuTec",0xa
 section .text
 	global _start
 
@@ -272,10 +272,11 @@ error:
 	mov eax, 4	;syscall para imprimir las indicaciones
 	mov ebx, 1
 	mov ecx, err
-	mov edx, 35
+	mov edx, 36
 	int 0x80
 
-	jmp final
+	jmp exit
+
 
 reiniciar:
 	mov ecx, 0
