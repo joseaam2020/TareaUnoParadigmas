@@ -7,12 +7,10 @@ section .bss
 section .data
 	ind db "Ingrese su primer operando...",0xa
 	ind2 db "Ingrese su segundo  operando...",0xa
-	menu db "Escoja una operacion:",0xa
-	sumar db "1. Sumar",0xa
-	restar db "2. Restar",0xa
-	multiplicar db "3. Multiplicar",0xa
-	dividir db "4. Dividir",0xa
+	
 section .text
+	extern imprime_menu
+	extern operaciones
 	global _start
 
 _start:
@@ -31,64 +29,59 @@ _start:
 
 	mov esi, op1	;mueve la direccion de op1 a esi
 	xor eax, eax	;limpia el registro
-	
+	xor edx, edx
+	xor ecx, ecx
 
 conversion:	
 	movzx eax, byte[esi]	;mueve el nuevo  byte a eax
-	cmp eax, 0x0a		;verifica que termino el string (falta validar
-	je imprime_menu		;inputs incorrectos)
+	cmp eax, 0x0a		;verifica que termino el string
+	je check_status		
+	
+	cmp eax, 0x2e
+	je guarda_decimal
 	
 	sub eax, 48		;convierte de ascii a entero
-	imul ebx, 10		; multiplica por 10 el acumulado (en ebx)
+	imul ebx, 10		;multiplica por 10 el acumulado (en ebx)
 	add ebx, eax 		;agrega el nuevo digito
 
 	inc esi
+	add edx, 1
+	add ecx, 1
 	jmp conversion		;loop
 	
 
-imprime_menu:
+guarda_decimal:
+	push edx	;cantidad de numeros a la izquierda del punto
+	mov edx, 0
+	inc esi
+	jmp conversion
 
-	push ebx
-	
-	cmp edi, op2	;compara para saber si ya se obtuvo segundo numero
+check_status:
+	cmp edx, ecx
+	je sin_decimal	
+
+	cmp edi, op2
+	jne operador
+
+	cmp edi, op2
 	je operacion
-
-	mov eax, 4	;syscall para imprimir las indicaciones
-	mov ebx, 1
-	mov ecx, menu
-	mov edx, 22
-	int 0x80
-
-	mov eax, 4	;syscall para imprimir las indicaciones
-	mov ebx, 1
-	mov ecx, sumar
-	mov edx, 9
-	int 0x80
-		
-	mov eax, 4	;syscall para imprimir las indicaciones
-	mov ebx, 1
-	mov ecx, restar
-	mov edx, 10
-	int 0x80
 	
-	mov eax, 4	;syscall para imprimir las indicaciones
-	mov ebx, 1
-	mov ecx, multiplicar
-	mov edx, 15
-	int 0x80
-	
-	mov eax, 4	;syscall para imprimir las indicaciones
-	mov ebx, 1
-	mov ecx, dividir
-	mov edx, 11
-	int 0x80
+sin_decimal:
+	push edx
+	mov edx, 0
+	jmp check_status
+
+operador:
+	push ecx
+	push ebx	;palabra convertida
+	call imprime_menu
 	
 	mov eax, 3
 	mov ebx, 0
 	mov ecx, opp
 	mov edx, 32
 	int 0x80	;lee el input y lo guarda en opp
-
+	
 indicacion2:
 	mov eax, 4	;syscall para imprimir las indicaciones
 	mov ebx, 1
@@ -101,53 +94,19 @@ indicacion2:
 	mov ecx, op2
 	mov edx, 32
 	int 0x80	;lee el input y lo guarda en op2
-
+	
 	mov esi, op2
 	mov edi, op2
 	xor eax, eax
-	jmp conversion	;guarda valores para realizar la conversion del segundo numero
+	xor ecx, ecx
+	xor edx, edx
+	jmp conversion	;conversion del segundo operando
 
 operacion:
+	push ecx
+	push ebx
 	mov eax, [opp]	
-	movzx ebx, al
-	sub ebx, 30h	;convierte de ascii a hex
-
-	cmp ebx, 1
-	je suma
-	
-	cmp ebx, 2
-	je resta
-
-	cmp ebx, 3
-	je multiplicacion
-	
-	cmp ebx, 4
-	je division
-suma:
-	pop eax		;hace la suma 
-	pop ebx
-	add eax, ebx
-	
-	jmp conversion_inversa
-
-resta:
-	pop ebx 
-	pop eax
-	sub eax, ebx 
-	jmp conversion_inversa
-
-multiplicacion:
-	pop ebx 
-	pop eax
-	imul ebx
-	jmp conversion_inversa
-
-division:
-	mov dx, 0
-	pop ebx 
-	pop eax 
-	
-	idiv bx
+	call operaciones
 	jmp conversion_inversa 
 	
 conversion_inversa:	;convierte el valor de hex a ascii
