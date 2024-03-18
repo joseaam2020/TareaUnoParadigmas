@@ -129,19 +129,7 @@ operacion:
 	call operaciones
 	push eax
 	xor ecx, ecx
-	mov ebx, 10
-
-len_resultado:
-	inc ecx
-	mov edx, 0
-	div ebx
-	test eax, eax
-	jz end_loop
-	jmp len_resultado
-
-end_loop:
-	pop eax
-	mov esi, ecx
+	xor esi, esi
 
 conversion_inversa:	;convierte el valor de hex a ascii
 	cmp eax, 2560 
@@ -158,7 +146,7 @@ conversion_inversa:	;convierte el valor de hex a ascii
 	add edx, 30h	;se le suma 30h o "0" para convertir a ascii
 	push edx	;se guarda digito en stack
 	
-	sub esi, 1
+	add esi, 1
 
 	mov eax, ebx	;compara para ver si se obtuvieron todos los digitos
 	cmp eax, 0
@@ -169,13 +157,13 @@ conversion_inversa:	;convierte el valor de hex a ascii
 agrega_punto:
 	mov edx, 0x2e
 	push edx
-	sub esi, 1
+	add esi, 1
 	jmp conversion_inversa
 
 agrega_punto_m:
 	mov edx, 0x2e
 	push edx
-	sub esi, 1
+	add esi, 1
 	jmp mayor
 
 mayor: 
@@ -189,7 +177,7 @@ mayor:
 	add edx, 30h 
 	push edx
 	
-	sub esi, 1
+	add esi, 1
 	cmp eax, 0
 	je term
 	jmp mayor

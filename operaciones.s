@@ -31,13 +31,7 @@ multiplicacion:
 
 division:
 	mov dx, 0
-	pop ebx 
-	pop ecx
-	pop eax
-	
-	idiv bx
-
-	
+	idiv cx
 	
 devolver:
 	ret
