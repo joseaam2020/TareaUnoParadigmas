@@ -35,7 +35,7 @@ _start:
 conversion:	
 	movzx eax, byte[esi]	;mueve el nuevo  byte a eax
 	cmp eax, 0x0a		;verifica que termino el string
-	je check_status		
+	je check_decimales		
 	
 	cmp eax, 0x2e
 	je guarda_decimal
@@ -51,14 +51,39 @@ conversion:
 	
 
 guarda_decimal:
-	push edx	;cantidad de numeros a la izquierda del punto
+	push edx
 	mov edx, 0
 	inc esi
 	jmp conversion
 
-check_status:
+
+check_decimales:
 	cmp edx, ecx
-	je sin_decimal	
+	je sin_decimal
+
+	cmp edx, ecx
+	jne llena_decimales
+
+loop_decimales:
+	imul ebx, 10
+	add ecx, 1
+	jmp check_status
+	
+
+llena_decimales:
+	pop edx
+	sub ecx, edx
+	jmp check_status	
+
+sin_decimal:
+	push edx
+	mov edx, 0
+	jmp check_decimales
+
+
+check_status:
+	cmp ecx, 3
+	loop_decimales
 
 	cmp edi, op2
 	jne operador
@@ -66,13 +91,8 @@ check_status:
 	cmp edi, op2
 	je operacion
 	
-sin_decimal:
-	push edx
-	mov edx, 0
-	jmp check_status
 
 operador:
-	push ecx
 	push ebx	;palabra convertida
 	call imprime_menu
 	
@@ -103,8 +123,8 @@ indicacion2:
 	jmp conversion	;conversion del segundo operando
 
 operacion:
-	push ecx
-	push ebx
+	mov ecx, ebx
+	pop edx
 	mov eax, [opp]	
 	call operaciones
 	jmp conversion_inversa 
