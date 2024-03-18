@@ -4,6 +4,7 @@ section .text
 operaciones:
 	movzx ebx, al
 	sub ebx, 30h	;convierte de ascii a hex
+	mov eax, edx
 
 	cmp ebx, 1
 	je suma
@@ -17,23 +18,15 @@ operaciones:
 	cmp ebx, 4
 	je division
 suma:
-	add edx, ecx
+	add eax, ecx
 	jmp devolver
 
 resta:	
-	pop ebx
-	pop edx 
-	pop eax
-	pop ecx
-	sub eax, ebx 
+	sub eax, ecx 
 	jmp devolver
 
 multiplicacion:
-	pop ebx
-	pop edx 
-	pop eax
-	pop ecx
-	imul ebx
+	imul ecx
 	jmp devolver
 
 division:
