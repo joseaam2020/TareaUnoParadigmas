@@ -8,7 +8,6 @@ section .bss
 section .data
 	ind db "Ingrese su primer operando...",0xa
 	ind2 db "Ingrese su segundo  operando...",0xa
-		
 	resultado db "El resultado de su opreacion es: $"
 	err db "Por favor ingrese valores aceptados",0xa
 	fin db 0xa,"Quiere realizar otra operacion?",0xa
@@ -70,7 +69,6 @@ guarda_decimal:
 	mov edx, 0
 	inc esi
 	jmp conversion
-
 
 check_decimales:
 	cmp edx, ecx
@@ -150,7 +148,7 @@ operacion:
 	cmp ebx, 4
 	ja error
 	call operaciones
-
+  push eax
 	xor ecx, ecx
 	xor esi, esi
 
