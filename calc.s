@@ -150,7 +150,7 @@ operacion:
 	cmp ebx, 4
 	ja error
 	call operaciones
-	push eax
+
 	xor ecx, ecx
 	xor esi, esi
 

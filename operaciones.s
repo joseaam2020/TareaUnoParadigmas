@@ -2,8 +2,6 @@ section .text
 	global operaciones
 	
 operaciones:
-	movzx ebx, al
-	sub ebx, 30h	;convierte de ascii a hex
 	mov eax, edx
 
 	cmp ebx, 1
@@ -27,6 +25,9 @@ resta:
 
 multiplicacion:
 	imul ecx
+	mov edx, 0
+	mov ebx, 100
+	idiv ebx
 	jmp devolver
 
 division:
