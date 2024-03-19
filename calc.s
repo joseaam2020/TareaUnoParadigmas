@@ -177,6 +177,22 @@ conversion_inversa:	;convierte el valor de hex a ascii
 	
 	jmp conversion_inversa
 
+check_division:
+	mov ecx, [opp]
+	sub ecx, 48
+	cmp ecx, 4
+	jne agrega_punto
+	add esi, 1
+	jmp conversion_inversa
+	
+check_division_m:
+	mov ecx, [opp]
+	sub ecx, 48
+	cmp ecx, 4
+	jne agrega_punto_m
+	add esi, 1
+	jmp mayor
+
 agrega_punto:
 	mov edx, 0x2e
 	push edx
