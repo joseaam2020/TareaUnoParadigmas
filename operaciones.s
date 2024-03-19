@@ -30,8 +30,8 @@ multiplicacion:
 	jmp devolver
 
 division:
-	mov dx, 0
-	idiv cx
+	mov edx, 0
+	idiv ecx
 	
 devolver:
 	ret
