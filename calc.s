@@ -159,7 +159,7 @@ conversion_inversa:	;convierte el valor de hex a ascii
 	jae mayor
 
 	cmp esi, 2
-	je agrega_punto
+	je check_division
 
 	mov ecx, 10
 	div cl 
@@ -179,16 +179,16 @@ conversion_inversa:	;convierte el valor de hex a ascii
 
 check_division:
 	mov ecx, [opp]
-	sub ecx, 48
-	cmp ecx, 4
+	sub cl, 48
+	cmp cl, 4
 	jne agrega_punto
 	add esi, 1
 	jmp conversion_inversa
 	
 check_division_m:
 	mov ecx, [opp]
-	sub ecx, 48
-	cmp ecx, 4
+	sub cl, 48
+	cmp cl, 4
 	jne agrega_punto_m
 	add esi, 1
 	jmp mayor
@@ -207,7 +207,7 @@ agrega_punto_m:
 
 mayor: 
 	cmp esi, 2
-	je agrega_punto_m
+	je check_division_m
 
 	mov edx, 0
 	mov ecx, 10
